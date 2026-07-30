@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Generated Report (Placeholder)</title>
+  <style>
+    :root{--bg:#0b1220;--card:#0f1a30;--text:#e9eefc;--muted:rgba(233,238,252,.72);--line:rgba(255,255,255,.10);--accent:#2B6CB0;--navy:#1F3864;}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#0b1220,#070b14);color:var(--text)}
+    .wrap{max-width:980px;margin:0 auto;padding:28px 18px 64px}
+    .card{background:rgba(15,26,48,.9);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+    h1{margin:10px 0 6px;color:#f2f6ff;font-size:clamp(20px,3vw,32px)}
+    p{margin:10px 0;color:var(--muted);line-height:1.7}
+    .warn{border-left:4px solid var(--accent);padding:12px 14px;background:rgba(43,108,176,.12);border-radius:12px;margin-top:14px}
+    .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+    a.button{display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;text-decoration:none;font-weight:800;background:linear-gradient(135deg,var(--accent),#3aa6ff);color:#07101e;box-shadow:0 14px 35px rgba(43,108,176,.35)}
+    a.secondary{background:transparent;color:#cfe0ff;border:1px solid rgba(255,255,255,.18);box-shadow:none}
+    details{border-top:1px solid rgba(255,255,255,.08);padding-top:12px;margin-top:12px}
+    summary{cursor:pointer;font-weight:800;color:#f2f6ff}
+    code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:8px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Generated Report</h1>
+      <p>
+        This page is a placeholder web output. Your source script (<code>build_report.js</code>) currently cannot finish producing a DOCX because it expects image assets (PNG figures) that are not present.
+      </p>
+      <div class="warn">
+        <div style="font-weight:900;color:#f2f6ff">Current status</div>
+        <p style="margin-top:8px">
+          Running <code>node build_report.js</code> fails with missing file errors (for example: <code>category_distribution.png</code>). Once those PNGs are provided (or the script is updated to skip missing images), the DOCX can be generated and then converted into a full HTML report page.
+        </p>
+      </div>
+
+      <div class="btnrow">
+        <a class="button" href="./index.html">Back to Home</a>
+        <a class="button secondary" href="./report.html" target="_blank" rel="noreferrer">Open Web Report View</a>
+      </div>
+
+      <details open>
+        <summary>What I built for you as a website</summary>
+        <p>
+          - <code>index.html</code>: landing page + navigation
+          <br />
+          - <code>report.html</code>: web-friendly report structure (sections, summaries, formula)
+          <br />
+          - <code>generated.html</code>: placeholder for “converted output” once DOCX generation succeeds
+        </p>
+      </details>
+    </div>
+  </div>
+</body>
+</html>
+

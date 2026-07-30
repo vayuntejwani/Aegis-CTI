@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Project Report (Web View)</title>
+  <style>
+    :root{--bg:#0b1220;--card:#0f1a30;--text:#e9eefc;--muted:rgba(233,238,252,.72);--line:rgba(255,255,255,.10);--accent:#2B6CB0;--navy:#1F3864;--grey:#595959}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#0b1220,#070b14);color:var(--text)}
+    header{padding:28px 18px 10px;text-align:center}
+    header h1{margin:10px 0 6px;letter-spacing:-.02em}
+    header p{margin:0 auto;max-width:920px;color:var(--muted);line-height:1.6}
+    main{max-width:980px;margin:0 auto;padding:18px 18px 70px}
+    .card{background:rgba(15,26,48,.9);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+    .toc{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 18px}
+    .chip{padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.14);color:#d7e6ff;background:rgba(255,255,255,.04);font-size:13px}
+    details{border-top:1px solid rgba(255,255,255,.08);padding-top:12px;margin-top:12px}
+    summary{cursor:pointer;font-weight:800}
+    .section{color:var(--muted);line-height:1.75}
+    code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:8px}
+    a{color:#9bd0ff}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AI-Powered Cyber Threat Intelligence Dashboard — Report (Web View)</h1>
+    <p>
+      Your <code>build_report.js</code> generates a DOCX using the <code>docx</code> library. This page is a lightweight web
+      representation. If you want the full report content automatically converted into HTML, provide the generated DOCX or
+      ask to extract text and build a multi-section HTML view.
+    </p>
+  </header>
+
+  <main>
+    <div class="card">
+      <div class="toc" aria-label="Sections">
+        <div class="chip">Abstract</div>
+        <div class="chip">Introduction</div>
+        <div class="chip">System Analysis</div>
+        <div class="chip">Dataset</div>
+        <div class="chip">Methodology</div>
+        <div class="chip">Results</div>
+        <div class="chip">Conclusion</div>
+      </div>
+
+      <details open>
+        <summary>Abstract</summary>
+        <div class="section">
+          Security Operations Centers (SOCs) and defense cybersecurity teams must review large volumes of threat reports and
+          alerts. Manual triage is slow, inconsistent, and does not scale. This project presents an AI-powered Cyber Threat
+          Intelligence (CTI) Dashboard that automates initial triage using NLP and Machine Learning: cleaning/normalization,
+          IOC extraction (IP, domains, hashes, CVEs), keyword extraction, TF-IDF-based embeddings, and extractive summarization.
+          Two supervised models predict category and severity; outputs are combined with asset criticality and report recency
+          in an explainable Priority Scoring formula that ranks incidents for analyst review.
+        </div>
+      </details>
+
+      <details>
+        <summary>What the Website Can Show</summary>
+        <div class="section">
+          <ul>
+            <li>Threat category & severity distributions</li>
+            <li>Priority tiers (P1–P4) and critical queue</li>
+            <li>Trends over time (daily/weekly/monthly)</li>
+            <li>Per-report drill-down: summary, keywords, and extracted IOCs</li>
+          </ul>
+          Embed/host the actual Streamlit app once you share the code/artifacts.
+        </div>
+      </details>
+
+      <details>
+        <summary>Priority Scoring (Explainable)</summary>
+        <div class="section">
+          The priority score is computed as a weighted, auditable formula:
+          <div style="margin-top:10px">
+            <code>priority_score = 100 × (w1·severity_component + w2·category_risk + w3·asset_criticality + w4·recency)</code>
+          </div>
+          where recency uses exponential decay (half-life ~7 days by default). The score is then bucketed into P1–P4 tiers.
+        </div>
+      </details>
+
+      <details>
+        <summary>Next Step (To make it fully functional)</summary>
+        <div class="section">
+          If you provide your Streamlit <code>app.py</code> and model/pipeline files (or the full project folder), we can:
+          <ul>
+            <li>Serve the dashboard inside this site (iframe/embed), or</li>
+            <li>Expose it via a small backend API and build a modern frontend UI.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </main>
+</body>
+</html>
+
