@@ -1327,6 +1327,10 @@
 
     // Fetch stats and reports
     async function loadDashboardData() {
+      // Mark DB as syncing
+      document.getElementById('kpi-status').innerText = 'Active';
+      document.getElementById('kpi-status').style.color = '#10b981';
+
       try {
         const yearEl = document.getElementById('filter-year');
         const durEl = document.getElementById('filter-duration');
@@ -1341,13 +1345,13 @@
           endDate = `${year}-12-31T23:59:59`;
         } else if (duration !== 'all') {
           const now = new Date();
-          endDate = now.toISOString();
+          endDate = now.toISOString().split('.')[0]; // strip ms
           let start = new Date();
           if (duration === '30d') start.setDate(now.getDate() - 30);
           else if (duration === '6m') start.setMonth(now.getMonth() - 6);
           else if (duration === '1y') start.setFullYear(now.getFullYear() - 1);
           else if (duration === '5y') start.setFullYear(now.getFullYear() - 5);
-          startDate = start.toISOString();
+          startDate = start.toISOString().split('.')[0];
         }
 
         let queryParams = '';
@@ -1355,32 +1359,42 @@
           queryParams = `?start_date=${encodeURIComponent(startDate)}&end_date=${encodeURIComponent(endDate)}`;
         }
 
-        const statsRes = await fetch(`${API_BASE}/stats${queryParams}`);
-        const stats = await statsRes.json();
-        
-        const reportsRes = await fetch(`${API_BASE}/reports${queryParams}`);
-        const reports = await reportsRes.json();
+        const [statsRes, reportsRes] = await Promise.all([
+          fetch(`${API_BASE}/stats${queryParams}`),
+          fetch(`${API_BASE}/reports${queryParams}`)
+        ]);
+
+        const stats = statsRes.ok ? await statsRes.json() : {};
+        const reportsRaw = reportsRes.ok ? await reportsRes.json() : [];
+
+        // Ensure reports is always an array
+        const reports = Array.isArray(reportsRaw) ? reportsRaw : [];
         reportsList = reports;
 
         // Update KPIs
         document.getElementById('kpi-total').innerText = reports.length;
-        document.getElementById('kpi-categories').innerText = Object.keys(stats.categories || {}).length;
-        
+        document.getElementById('kpi-categories').innerText = Object.keys((stats && stats.categories) ? stats.categories : {}).length;
         const p1Count = reports.filter(r => r.priority_tier && r.priority_tier.startsWith('P1')).length;
         document.getElementById('kpi-p1').innerText = p1Count;
 
         // Render charts
-        renderCategoryChart(stats.categories || {});
-        renderSeverityChart(stats.severities || {});
-        renderVolumeChart(stats.daily_volume || []);
+        renderCategoryChart((stats && stats.categories) ? stats.categories : {});
+        renderSeverityChart((stats && stats.severities) ? stats.severities : {});
+        renderVolumeChart((stats && stats.daily_volume) ? stats.daily_volume : []);
 
         // Build queue
         renderQueueTable(reports);
 
       } catch (err) {
         console.error('Error fetching CTI database:', err);
-        document.getElementById('kpi-status').innerText = 'Offline';
-        document.getElementById('kpi-status').style.color = '#ef4444';
+        // Only mark offline if it's a true connection failure, not a filter error
+        try {
+          const ping = await fetch(`${API_BASE}/stats`);
+          if (!ping.ok) throw new Error('server down');
+        } catch {
+          document.getElementById('kpi-status').innerText = 'Offline';
+          document.getElementById('kpi-status').style.color = '#ef4444';
+        }
       }
     }
 

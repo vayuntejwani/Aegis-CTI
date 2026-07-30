@@ -18,41 +18,46 @@ CORS(app)
 def index():
     return send_from_directory(os.path.dirname(os.path.abspath(__file__)), 'index.html')
 
+def parse_iso_naive(d_str):
+    if not d_str:
+        return None
+    try:
+        d_str = str(d_str).replace('Z', '+00:00')
+        dt = datetime.fromisoformat(d_str)
+        if dt.tzinfo is not None:
+            dt = dt.replace(tzinfo=None)
+        return dt
+    except Exception:
+        try:
+            return datetime.strptime(str(d_str)[:10], "%Y-%m-%d")
+        except Exception:
+            return None
+
 @app.route('/api/reports', methods=['GET'])
 def get_reports():
     try:
         reports = db_manager.get_all_reports()
         
-        # Apply filters if provided in query arguments
         category_filter = request.args.get('categories')
         severity_filter = request.args.get('severities')
         start_date = request.args.get('start_date')
         end_date = request.args.get('end_date')
         
+        start_dt = parse_iso_naive(start_date)
+        end_dt = parse_iso_naive(end_date)
+        
         filtered_reports = []
         for r in reports:
-            # Parse report date
-            r_date = r['date'] # string in ISO format
-            r_date_dt = datetime.fromisoformat(r_date)
+            r_date_dt = parse_iso_naive(r.get('date'))
             
-            if category_filter and r['category'] not in category_filter.split(','):
+            if category_filter and r.get('category') not in category_filter.split(','):
                 continue
-            if severity_filter and r['severity'] not in severity_filter.split(','):
+            if severity_filter and r.get('severity') not in severity_filter.split(','):
                 continue
-            if start_date:
-                try:
-                    start_dt = datetime.fromisoformat(start_date)
-                    if r_date_dt < start_dt:
-                        continue
-                except ValueError:
-                    pass
-            if end_date:
-                try:
-                    end_dt = datetime.fromisoformat(end_date)
-                    if r_date_dt > end_dt:
-                        continue
-                except ValueError:
-                    pass
+            if start_dt and r_date_dt and r_date_dt < start_dt:
+                continue
+            if end_dt and r_date_dt and r_date_dt > end_dt:
+                continue
             filtered_reports.append(r)
             
         return jsonify(filtered_reports)
@@ -67,19 +72,18 @@ def get_stats():
         start_date = request.args.get('start_date')
         end_date = request.args.get('end_date')
         
-        if start_date or end_date:
+        start_dt = parse_iso_naive(start_date)
+        end_dt = parse_iso_naive(end_date)
+        
+        if start_dt or end_dt:
             filtered = []
             for r in reports:
-                r_date = r['date']
-                try:
-                    r_dt = datetime.fromisoformat(r_date)
-                    if start_date and r_dt < datetime.fromisoformat(start_date):
-                        continue
-                    if end_date and r_dt > datetime.fromisoformat(end_date):
-                        continue
-                    filtered.append(r)
-                except Exception:
-                    filtered.append(r)
+                r_date_dt = parse_iso_naive(r.get('date'))
+                if start_dt and r_date_dt and r_date_dt < start_dt:
+                    continue
+                if end_dt and r_date_dt and r_date_dt > end_dt:
+                    continue
+                filtered.append(r)
             reports = filtered
 
         total_reports = len(reports)
