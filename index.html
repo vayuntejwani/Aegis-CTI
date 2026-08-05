@@ -126,7 +126,7 @@
       padding: 24px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       backdrop-filter: blur(12px);
-      transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+      transition: transform 0.2s, box-shadow 0.das2s, background-color 0.2s;
     }
 
     .card:hover {
@@ -1132,14 +1132,19 @@
   </section>
 
   <!-- ═══════════════════════════════════════════════════════════ STREAMLIT ANALYTICS EMBED ═══ -->
-  <section id="analytics-section" style="max-width:1400px;margin:0 auto;padding:0 24px 40px;display:none">
-
-
-    <!-- Embedded Streamlit iFrame Container -->
-    <div class="card" style="padding:0;overflow:hidden;border-radius:12px;min-height:800px;background:rgba(0,0,0,0.2)">
-      <iframe id="streamlit-iframe" src="http://localhost:8501/?embed=true" style="width:100%;height:850px;border:none;border-radius:12px"></iframe>
+  <section id="analytics-section" style="max-width:100%;margin:0;padding:0;display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:500;background:var(--bg)">
+    <div style="display:flex;flex-direction:column;height:100%">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(7,13,25,0.95);border-bottom:1px solid rgba(255,255,255,0.08);flex-shrink:0">
+        <div style="display:flex;align-items:center;gap:10px">
+          <button onclick="switchSection('triage')" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#94a3b8;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600">← Back to Portal</button>
+          <span style="color:#34d399;font-size:14px;font-weight:700">📊 Analytics Dashboard</span>
+        </div>
+        <a href="http://localhost:8501" target="_blank" style="background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);color:#60a5fa;padding:6px 14px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:600">Open in New Tab ↗</a>
+      </div>
+      <iframe id="streamlit-iframe" src="http://localhost:8501/?embed=true" style="width:100%;flex:1;border:none;display:block"></iframe>
     </div>
   </section>
+
 
   <!-- Authentication Modal -->
   <div class="modal-overlay" id="auth-modal">
@@ -1704,7 +1709,10 @@
       const mainElement = document.querySelector('main');
       const sensorSection = document.getElementById('sensor-section');
       const analyticsSection = document.getElementById('analytics-section');
-      
+      const headerEl = document.querySelector('header');
+      const navEl = document.querySelector('nav.top-nav');
+      const footerEl = document.querySelector('.footer');
+
       // Reset active tabs
       if (tabTriage) tabTriage.classList.remove('active');
       if (tabSensors) tabSensors.classList.remove('active');
@@ -1715,17 +1723,30 @@
       if (sensorSection) sensorSection.style.display = 'none';
       if (analyticsSection) analyticsSection.style.display = 'none';
 
-      if (sectionId === 'sensors') {
-        if (tabSensors) tabSensors.classList.add('active');
-        if (sensorSection) sensorSection.style.display = 'block';
-      } else if (sectionId === 'analytics') {
+      if (sectionId === 'analytics') {
+        // Fullscreen mode — hide nav/header/footer
+        if (headerEl) headerEl.style.display = 'none';
+        if (navEl) navEl.style.display = 'none';
+        if (footerEl) footerEl.style.display = 'none';
+        document.body.style.overflow = 'hidden';
         if (tabAnalytics) tabAnalytics.classList.add('active');
         if (analyticsSection) analyticsSection.style.display = 'block';
       } else {
-        if (tabTriage) tabTriage.classList.add('active');
-        if (mainElement) mainElement.style.display = 'grid';
+        // Restore nav/header/footer for other sections
+        if (headerEl) headerEl.style.display = '';
+        if (navEl) navEl.style.display = '';
+        if (footerEl) footerEl.style.display = '';
+        document.body.style.overflow = '';
+        if (sectionId === 'sensors') {
+          if (tabSensors) tabSensors.classList.add('active');
+          if (sensorSection) sensorSection.style.display = 'block';
+        } else {
+          if (tabTriage) tabTriage.classList.add('active');
+          if (mainElement) mainElement.style.display = 'grid';
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+
     }
 
     function reloadStreamlitFrame() {

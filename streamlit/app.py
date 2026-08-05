@@ -14,7 +14,31 @@ st.set_page_config(
 )
 st.title("Aegis CTI Dashboard")
 
-
+st.markdown("""
+<style>
+  /* Hide the sidebar top logo/collapse button decoration */
+  div[data-testid="stSidebarHeader"] {
+    display: none !important;
+  }
+  div[data-testid="stSidebarCollapseButton"] {
+    display: none !important;
+  }
+  /* Remove top padding from sidebar content */
+  section[data-testid="stSidebar"] > div:first-child {
+    padding-top: 0.5rem !important;
+    margin-top: 0 !important;
+  }
+  section[data-testid="stSidebar"] .stSidebarUserContent {
+    padding-top: 0.5rem !important;
+  }
+  div[data-testid="stSidebarContent"] {
+    padding-top: 0 !important;
+  }
+  .block-container {
+    padding-top: 1.5rem !important;
+  }
+</style>
+""", unsafe_allow_html=True)
 
 def apply_custom_theme(fig):
     fig.update_layout(
@@ -74,7 +98,7 @@ with st.sidebar:
     w_sum = max(1e-9, (w1 + w2 + w3 + w4))
     w1, w2, w3, w4 = w1 / w_sum, w2 / w_sum, w3 / w_sum, w4 / w_sum
 
-    st.caption("Priority formula is explainable and auditable.")
+    
 
 # ------------------------------
 # Load and score corpus
@@ -177,7 +201,7 @@ with tab1:
         tier_counts = df["priority_tier"].value_counts().sort_index()
         st.bar_chart(tier_counts)
 
-        st.subheader("Top keywords (from stub TF-IDF/regex extractor)")
+        st.subheader("Top keywords")
         # Collect keywords from predictions
         kw = {}
         for r in filtered:
